@@ -3,4 +3,5 @@
     <string name="enter_address">输入地址</string>
     <string name="default_place">广东</string>
     <string name="default_address">中国广东省</string>
+    <string name="double_exit">再按一次,退出程序</string>
 </resources>

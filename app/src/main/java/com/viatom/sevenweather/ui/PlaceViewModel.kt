@@ -4,13 +4,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.viatom.sevenweather.house.Repository
+import com.viatom.sevenweather.logic.dao.PlaceDao
 import com.viatom.sevenweather.logic.model.Place
 
 /**
  * @author：created by sunhao
  * 创建时间：2021/9/27 17:03
  * 邮箱：sunhao@viatomtech.com
- * 类说明: ViewModel
+ * 类说明:  Place ViewModel
  */
 class PlaceViewModel : ViewModel() {
 
@@ -24,7 +25,33 @@ class PlaceViewModel : ViewModel() {
         Repository.searchPlaces(query)
     }
 
+    /**
+     * 查询城市信息
+     *
+     * @param query String
+     */
     fun searchPlaces(query: String) {
         searchLiveData.value = query
     }
+
+    /**
+     * 保存选中的城市
+     *
+     * @param place Place
+     */
+    fun savePlace(place: Place) = Repository.savePlace(place)
+
+    /**
+     * 获取保存的城市
+     *
+     * @return Place
+     */
+    fun getSavedPlace() = Repository.getSavedPlace()
+
+    /**
+     * 判断是否储存有城市数据
+     *
+     * @return Boolean
+     */
+    fun isPlaceSaved() = Repository.isPlaceSaved()
 }
