@@ -1,17 +1,19 @@
 package com.viatom.sevenweather.ui.weather
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.viatom.sevenweather.BaseActivity
 import com.viatom.sevenweather.R
 import com.viatom.sevenweather.WeatherApplication
-//import com.viatom.sevenweather.databinding.ActivityWeatherBinding
 import com.viatom.sevenweather.logic.model.Weather
 import com.viatom.sevenweather.logic.model.getSky
 import com.viatom.sevenweather.ui.WeatherViewModel
@@ -34,7 +36,7 @@ class WeatherActivity : BaseActivity() {
 //    private lateinit var mDataBinding: ActivityWeatherBinding
 
     //viewModel 懒加载
-    private val viewModel by lazy { ViewModelProvider(this).get(WeatherViewModel::class.java) }
+    val viewModel by lazy { ViewModelProvider(this).get(WeatherViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +64,39 @@ class WeatherActivity : BaseActivity() {
                 LoggerUtils.d(TAG, "无法获取天气信息")
                 result.exceptionOrNull()?.printStackTrace()
             }
+            swipeRefresh.isRefreshing = false
         }
-        viewModel.refreshWeather(viewModel.locationLongitude, viewModel.locationLatitude)
+        //下拉刷新天气信息
+        swipeRefresh.setColorSchemeResources(R.color.design_default_color_primary)
+        swipeRefresh.setOnRefreshListener {
+            refreshWeather()
+        }
+        refreshWeather()
+
+        //滑动菜单
+        navBtn.setOnClickListener {
+            //跟随系统语言自动设置滑动菜单的左滑和右滑 START
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                //滑动菜单关闭时 ，关闭输入法
+                val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                manager.hideSoftInputFromWindow(
+                    drawerView.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS
+                )
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+            }
+        })
     }
 
     /**
@@ -75,6 +108,7 @@ class WeatherActivity : BaseActivity() {
         val realtimeResult = weather.realtime
         val daily = weather.daily
         //填充 now.xml 布局中的数据
+        placeName.text = viewModel.placeName
         val currentTempText = "${realtimeResult.temperature} ℃"
         currentTemp.text = currentTempText
         currentSky.text = getSky(realtimeResult.skyCon).info
@@ -87,7 +121,9 @@ class WeatherActivity : BaseActivity() {
         for (i in 0 until days) {
             val skyCon = daily.skyCon[i]
             val temperature = daily.temperature[i]
-            val view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false)
+            //给forecastLayout增加子布局
+            val view =
+                LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false)
             val dateInfo = view.findViewById(R.id.dateInfo) as TextView
             val skyIcon = view.findViewById(R.id.skyIcon) as ImageView
             val skyInfo = view.findViewById(R.id.skyInfo) as TextView
@@ -108,6 +144,15 @@ class WeatherActivity : BaseActivity() {
         ultravioletText.text = lifeIndex.ultraviolet[0].desc
         carWashingText.text = lifeIndex.carWashing[0].desc
         weatherLayout.visibility = View.VISIBLE
+    }
+
+    /**
+     * 刷新天气信息
+     */
+     fun refreshWeather() {
+        viewModel.refreshWeather(viewModel.locationLongitude, viewModel.locationLatitude)
+        Toast.makeText(WeatherApplication.context, "刷新成功", Toast.LENGTH_SHORT).show()
+        swipeRefresh.isRefreshing = true
     }
 
     companion object {

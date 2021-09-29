@@ -9,6 +9,7 @@ import com.viatom.sevenweather.utils.LoggerUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -96,7 +97,6 @@ object Repository {
                 async { WeatherNetwork.getDailyWeather(longitude, latitude) }
             val realtimeResponse = deferredRealtimeWeather.await()
             val dailyResponse = deferredDailyWeather.await()
-
             if (realtimeResponse.status == "ok" && dailyResponse.status == "ok") {
                 val weather =
                     Weather(realtimeResponse.result.realtime, dailyResponse.result.daily)

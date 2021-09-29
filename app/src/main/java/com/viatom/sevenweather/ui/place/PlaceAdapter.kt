@@ -12,6 +12,7 @@ import com.viatom.sevenweather.logic.model.Place
 import com.viatom.sevenweather.ui.weather.WeatherActivity
 import com.viatom.sevenweather.utils.LogUtils
 import com.viatom.sevenweather.utils.LoggerUtils
+import kotlinx.android.synthetic.main.activity_weather.*
 
 /**
  * @author：created by sunhao
@@ -44,25 +45,34 @@ class PlaceAdapter(private val fragment: PlaceFragment, private val placeList: L
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.place_item, parent, false)
         val holder = ViewHolder(view)
+        //点击事件
         holder.itemView.setOnClickListener {
             val position = holder.bindingAdapterPosition
-            LoggerUtils.d(TAG,"$position")
             val place = placeList[position]
-            //intent 跳转界面,传递数据
-            val intent = Intent(parent.context, WeatherActivity::class.java).apply {
-                putExtra("location_longitude", place.location.lng)
-                putExtra("location_latitude", place.location.lat)
-                putExtra("place_name", place.name)
-            }
+            val activity = fragment.activity
             //测试打印
             LoggerUtils.d(
                 TAG,
                 "location_longitude: + ${place.location.lng} + location_latitude:  ${place.location.lat} + place_name: ${place.name}"
             )
+            //当在weather界面时不进行跳转，直接获取数据刷新天气信息
+            if (activity is WeatherActivity) {
+                activity.drawerLayout.closeDrawers()
+                activity.viewModel.locationLongitude = place.location.lng
+                activity.viewModel.locationLatitude = place.location.lat
+                activity.viewModel.placeName = place.name
+                activity.refreshWeather()
+            } else {
+                //在MainActivity界面时，intent 跳转界面到weatherActivity,传递相关数据
+                val intent = Intent(parent.context, WeatherActivity::class.java).apply {
+                    putExtra("location_longitude", place.location.lng)
+                    putExtra("location_latitude", place.location.lat)
+                    putExtra("place_name", place.name)
+                }
+                fragment.startActivity(intent)
+                activity?.finish()
+            }
             fragment.viewModel.savePlace(place)
-            fragment.startActivity(intent)
-            fragment.activity?.finish()
-
         }
         return holder
     }
