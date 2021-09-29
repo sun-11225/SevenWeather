@@ -17,10 +17,22 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    //使用gradle生成apk文件配置
+    signingConfigs {
+        config{
+            storeFile file(KEY_PATH)
+            storePassword KAY_PASS
+            keyAlias = ALIAS_NAME
+            keyPassword ALIAS_PASS
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //gradle生成apk文件配置
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -30,8 +42,27 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    dataBinding{
+    dataBinding {
         enabled = true
+    }
+}
+
+//自定义打包时apk名字
+android.applicationVariants.all { variant ->
+    variant.outputs.all { output ->
+        def fileName
+        if (outputFileName != null && outputFileName.contains('.apk')) {
+            def createTime = new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone("GMT+08:00"))
+            def versionName = 'v' + variant.getVersionName() //版本名称
+
+            if (variant.buildType.name == 'release') {
+                //输出示例：ViHealthPro_2.44.0_09-27_release.apk
+                fileName = "SevenWeather_${versionName}_${createTime}_release.apk"
+            } else if (variant.buildType.name == 'debug') {
+                fileName = "SevenWeather_${versionName}_${createTime}_debug.apk"
+            }
+            outputFileName = fileName
+        }
     }
 }
 
