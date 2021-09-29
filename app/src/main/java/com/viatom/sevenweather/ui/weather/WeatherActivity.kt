@@ -71,7 +71,8 @@ class WeatherActivity : BaseActivity() {
         swipeRefresh.setOnRefreshListener {
             refreshWeather()
         }
-        refreshWeather()
+        //进入app的第一次刷新
+        viewModel.refreshWeather(viewModel.locationLongitude, viewModel.locationLatitude)
 
         //滑动菜单
         navBtn.setOnClickListener {
