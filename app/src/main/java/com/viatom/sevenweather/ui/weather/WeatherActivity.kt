@@ -16,7 +16,6 @@ import com.viatom.sevenweather.R
 import com.viatom.sevenweather.WeatherApplication
 import com.viatom.sevenweather.logic.model.Weather
 import com.viatom.sevenweather.logic.model.getSky
-import com.viatom.sevenweather.ui.WeatherViewModel
 import com.viatom.sevenweather.utils.LoggerUtils
 import kotlinx.android.synthetic.main.activity_weather.*
 import kotlinx.android.synthetic.main.forecast.*

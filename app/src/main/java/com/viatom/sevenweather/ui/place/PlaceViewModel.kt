@@ -1,4 +1,4 @@
-package com.viatom.sevenweather.ui
+package com.viatom.sevenweather.ui.place
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.viatom.sevenweather.house.Repository
 import com.viatom.sevenweather.logic.dao.PlaceDao
 import com.viatom.sevenweather.logic.model.Place
+import java.util.*
 
 /**
  * @author：created by sunhao
@@ -18,7 +19,7 @@ class PlaceViewModel : ViewModel() {
     private val searchLiveData = MutableLiveData<String>()
 
     //缓存城市数据
-    val placeList = ArrayList<Place>()
+    val placeList = LinkedList<Place>()
 
     //如果ViewModel中的某个LiveData对象是调用另外的方法获取的，借助switchMap()方法，将这个LiveData对象转换成另外一个可观察的LiveData对象。
     val placeLiveData = Transformations.switchMap(searchLiveData) { query ->

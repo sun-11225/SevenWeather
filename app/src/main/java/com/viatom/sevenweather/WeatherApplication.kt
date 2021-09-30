@@ -3,6 +3,7 @@ package com.viatom.sevenweather
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import org.litepal.LitePal
 
 /**
  * @author：created by sunhao
@@ -14,6 +15,7 @@ class WeatherApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+//        LitePal.initialize(this)
         context = applicationContext
     }
 

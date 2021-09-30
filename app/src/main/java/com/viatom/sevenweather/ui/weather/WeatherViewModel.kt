@@ -1,10 +1,11 @@
-package com.viatom.sevenweather.ui
+package com.viatom.sevenweather.ui.weather
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.viatom.sevenweather.house.Repository
 import com.viatom.sevenweather.logic.model.Location
+import com.viatom.sevenweather.logic.model.Weather
 
 /**
  * @author：created by sunhao
@@ -21,6 +22,8 @@ class WeatherViewModel : ViewModel() {
     var locationLatitude = ""
     var placeName = ""
 
+    val weather = MutableLiveData<Weather>()
+
 
     //如果ViewModel中的某个LiveData对象是调用另外的方法获取的，借助switchMap()方法，将这个LiveData对象转换成另外一个可观察的LiveData对象。
     val weatherLiveData = Transformations.switchMap(locationLiveData) { location ->
@@ -34,6 +37,7 @@ class WeatherViewModel : ViewModel() {
      * @param latitude String
      */
     fun refreshWeather(longitude: String, latitude: String) {
+       weather.value = Repository.optimizeRefreshWeather(locationLongitude, locationLatitude).value?.getOrNull()
         locationLiveData.value = Location(longitude, latitude)
     }
 }

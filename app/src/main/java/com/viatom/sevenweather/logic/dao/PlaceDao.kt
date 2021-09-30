@@ -29,7 +29,7 @@ object PlaceDao {
      * @param place Place
      */
     fun savePlace(place: Place) {
-        sharedPreferences().edit().putString(SAVE_PLACE, Gson().toJson(place)).commit()
+        sharedPreferences().edit().putString(SAVE_PLACE, Gson().toJson(place)).apply()
     }
 
     /**

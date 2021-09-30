@@ -15,7 +15,7 @@ import com.viatom.sevenweather.MainActivity
 import com.viatom.sevenweather.R
 import com.viatom.sevenweather.WeatherApplication
 //import com.viatom.sevenweather.databinding.FragmentPlaceBinding
-import com.viatom.sevenweather.ui.PlaceViewModel
+import com.viatom.sevenweather.ui.place.PlaceViewModel
 import com.viatom.sevenweather.ui.weather.WeatherActivity
 import com.viatom.sevenweather.utils.LoggerUtils
 import kotlinx.android.synthetic.main.fragment_place.*
@@ -90,7 +90,6 @@ class PlaceFragment : Fragment() {
                 viewModel.placeList.clear()
                 viewModel.placeList.addAll(places)
 //                adapter.notifyDataSetChanged()
-                LoggerUtils.d(TAG, places[0].location.toString())
                 adapter.notifyItemRangeChanged(0, 5)
             } else {
                 Toast.makeText(WeatherApplication.context, "未查询到指定地点，请重试", Toast.LENGTH_SHORT)
